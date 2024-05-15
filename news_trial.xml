@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time News on Home Textiles</title>
+</head>
+<body>
+    <div class="col-md-6">
+        <h2 class="section-title">Latest News</h2>
+        <ul class="news" id="latest-news">
+            <!-- Latest news items will be dynamically added here -->
+        </ul>
+    </div>
+
+    <script>
+        // Function to fetch and display latest news from DuckDuckGo
+        function fetchLatestNews() {
+            const query = 'home textiles products'; // Query for news related to home textile products
+            const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear existing news items
+                    document.getElementById('latest-news').innerHTML = '';
+
+                    // Process the search results from DuckDuckGo
+                    const searchResults = data.RelatedTopics;
+                    if (searchResults && searchResults.length > 0) {
+                        searchResults.forEach(result => {
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `
+                                <div class="date">${result.FirstURL}</div>
+                                <h3 class="entry-title"><a href="${result.FirstURL}">${result.Text}</a></h3>
+                            `;
+                            document.getElementById('latest-news').appendChild(listItem);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching latest news:', error));
+        }
+
+        // Call fetchLatestNews function initially to load news on page load
+        fetchLatestNews();
+
+        // Set interval to fetch news every 5 minutes (adjust the interval as needed)
+        setInterval(fetchLatestNews, 5 * 60 * 1000); // 5 minutes in milliseconds
+    </script>
+</body>
+</html>
